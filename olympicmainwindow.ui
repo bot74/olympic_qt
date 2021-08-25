@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OlympicMainWindow</class>
+ <widget class="QMainWindow" name="OlympicMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>奥运会奖牌榜</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="lableTitleIndex">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>121</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>奥运会排行榜</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidgetScoreBoard">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>80</y>
+      <width>621</width>
+      <height>431</height>
+     </rect>
+    </property>
+    <property name="rowCount">
+     <number>0</number>
+    </property>
+    <property name="columnCount">
+     <number>4</number>
+    </property>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuSearch">
+     <property name="title">
+      <string>Search</string>
+     </property>
+     <addaction name="actionByCountryNum"/>
+     <addaction name="actionByEventNum"/>
+    </widget>
+    <addaction name="actionInput_Modifie_Data"/>
+    <addaction name="actionCalculate"/>
+    <addaction name="menuSearch"/>
+   </widget>
+   <addaction name="menu_2"/>
+   <addaction name="menuTools"/>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionByCountryNum">
+   <property name="text">
+    <string>ByCountryNum</string>
+   </property>
+  </action>
+  <action name="actionByEventNum">
+   <property name="text">
+    <string>ByEventNum</string>
+   </property>
+  </action>
+  <action name="actionInput_Modifie_Data">
+   <property name="text">
+    <string>Input/Modifie Data</string>
+   </property>
+  </action>
+  <action name="actionCalculate">
+   <property name="text">
+    <string>Calculate</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
