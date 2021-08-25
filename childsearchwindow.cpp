@@ -28,3 +28,16 @@ void ChildSearchWindow::on_pushButton_clicked()
     this->close();
 }
 
+void ChildSearchWindow::hideSpinCountry()
+{
+    ui->spinBoxCountry->setHidden(true);
+}
+
+void ChildSearchWindow::hideLableCountry()
+{
+    ui->labelCountry->setHidden(true);
+}
+
+
+
+

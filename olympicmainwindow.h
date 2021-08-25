@@ -39,11 +39,13 @@ signals:
 public slots:
     void sortTableByCol(int col);
     void receiveData(int CountryNum, int EventNum);
+    void receiveDataEventNumOnly(int CountryNum, int EventNum);
 private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionCalculate_triggered();
     void on_actionByCountryNum_triggered();
     void on_actionAbout_triggered();
+    void on_actionByEventNum_triggered();
 };
 #endif // OLYMPICMAINWINDOW_H

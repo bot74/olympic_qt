@@ -16,6 +16,8 @@ public:
                                int *CountryNum = nullptr,
                                int *EventNum = nullptr);
     ~ChildSearchWindow();
+    void hideSpinCountry();
+    void hideLableCountry();
 
 signals:
     void sendData(int CountryNum, int EventNum);
@@ -25,6 +27,7 @@ private slots:
 
 private:
     Ui::ChildSearchWindow *ui;
+
 };
 
 #endif // CHILDSEARCHWINDOW_H

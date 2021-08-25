@@ -433,6 +433,19 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
 
 }
 
+void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
+{
+    QString prompt = "hello world";
+
+    QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
+                           "查询成功",                        //标题
+                           prompt,                      //内容
+                           QMessageBox::Ok,                 //按钮
+                           this);                           //停靠父窗口
+        //显示消息窗口
+        msgBox.exec();
+}
+
 void OlympicMainWindow::on_actionAbout_triggered()
 {
     QString prompt = "输入输出数据格式定义:\n";
@@ -449,5 +462,23 @@ void OlympicMainWindow::on_actionAbout_triggered()
                            this);                           //停靠父窗口
         //显示消息窗口
         msgBox.exec();
+}
+
+
+void OlympicMainWindow::on_actionByEventNum_triggered()
+{
+    int *CountryNum = new int;
+    int *EventNum = new int;
+    *CountryNum = CountrySum;
+    *EventNum = EventSum;
+
+    CSW = new ChildSearchWindow(nullptr, CountryNum, EventNum);
+    CSW->hideSpinCountry();
+    CSW->hideLableCountry();
+    CSW->show();
+    connect(CSW, SIGNAL(sendData(int,int)),
+            this, SLOT(receiveDataEventNumOnly(int,int)));//获取用户输入
+    delete CountryNum;
+    delete EventNum;
 }
 
