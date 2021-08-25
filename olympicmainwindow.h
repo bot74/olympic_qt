@@ -19,7 +19,17 @@ public:
 private:
     Ui::OlympicMainWindow *ui;
     QFile curFile;
+    int CountryScore[300];//[0]不使用
+    int CountryScoreMale[300];//[0]不使用
+    int CountryScoreFemale[300];//[0]不使用
+    int CountrySum;
+    int MaleSum;
+    int FemaleSum;
+    int EventSum;
+    QStringList EventList[400];//EventList[0]不使用
+    QStringList header;//用于存放水平表头数据
     void saveFile(const QString &name);
+    void openDefault();
 
 signals:
     void sectionClicked(int);
@@ -28,5 +38,6 @@ public slots:
 private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
+    void on_actionCalculate_triggered();
 };
 #endif // OLYMPICMAINWINDOW_H
