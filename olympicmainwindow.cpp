@@ -123,13 +123,6 @@ void OlympicMainWindow::on_actionOpen_triggered()
     //QStringList EventList[400];//最多读取400行，放弃tempLine[0]不使用，也就是最多存储399个子项目数据
     //int CountryScore[300];
 
-    //初始化国家分数
-    for (i=0;i<300;i++){
-        CountryScore[i] = 0;
-        CountryScoreFemale[i] = 0;
-        CountryScoreMale[i] = 0;
-    }
-
     //根据国家总数添加对应行
     for (i = 1; i <= CountrySum; i++){
         int rowCount = ui->tableWidgetScoreBoard->rowCount();
@@ -204,6 +197,24 @@ void OlympicMainWindow::on_actionSave_triggered()
 void OlympicMainWindow::on_actionCalculate_triggered()
 {
     CalculateBackground();//GUI计算按钮按下的话，除了后台计算，可能还要做一些用户方面的交互
+
+    int i = 0;
+    QStringList lineList;   //整行字符串分割处理为单个字符串存入到表格中
+    //根据计算结果填充主页榜单表格,共CountrySum行，4列，4列分别为：国家编号，国家总分，男子总分，女子总分
+    //更新方法为即使用户只修改了一个项目的数据（甚至没有修改），也强制对整个表格进行更新
+    for (i = 1; i <= CountrySum; i++){
+        //i+1即为对应行编号
+        //将计算结果包裹到QStringList lineList中
+        lineList={QString::number(i), QString::number(CountryScore[i]),
+                  QString::number(CountryScoreMale[i]),QString::number(CountryScoreFemale[i])};
+
+        qDebug() << lineList;
+        //用lineList填充表格
+        for (int col = 0; col < 4; col++){
+            ui->tableWidgetScoreBoard->setItem(i-1, col, new TableWidgetItem(lineList[col]));
+        }
+    }
+
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
                            "成功",                        //标题
                            "已更新国家得分情况",                      //内容
@@ -294,6 +305,14 @@ void OlympicMainWindow::openDefault()
 void OlympicMainWindow::CalculateBackground()
 {
     int i = 0;
+
+    //初始化国家分数
+    for (i=0;i<300;i++){
+        CountryScore[i] = 0;
+        CountryScoreFemale[i] = 0;
+        CountryScoreMale[i] = 0;
+    }
+
     for (i = 1; i <= MaleSum; i++){//统计男子团队数据
         //假定男子项目均为取前五积分，规则为7、5、3、2、1
         int num = EventList[i][1].toInt();//获取第1名名次所属国家的编号
@@ -355,6 +374,13 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
     //判断项目类型，初始化提示语
     int size = EventList[EventNum].size();
     qDebug() << size;
+
+    if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
+        size--;         //作为折衷方案，做一个特殊判断
+    //qDebug() << EventList[1].size();
+    //qDebug() << EventList[2].size();
+    //qDebug() <<EventList[1][7];
+
     QString prompt = "国家 " + QString::number(CountryNum) + " 在项目 "
                     + EventList[EventNum][0] + "(编号 " + QString::number(EventNum)
                     + " )中获得了：";
@@ -435,7 +461,26 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
 
 void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
 {
-    QString prompt = "hello world";
+    QString prompt = "";
+    QString EventName = EventList[EventNum][0];
+    int size = EventList[EventNum].size();
+    if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
+        size--;         //作为折衷方案，做一个特殊判断
+    //qDebug() << EventList[1].size();
+    //qDebug() << EventList[2].size();
+    //qDebug() <<EventList[1][7];
+    prompt += EventName;
+    prompt += " 项目(编号 ";
+    prompt += QString::number(EventNum);
+    prompt += " )中各个国家的获奖情况(按名次从高到低，以编号形式)为：\n";
+    prompt += EventList[EventNum][1] + "\n";
+    prompt += EventList[EventNum][2] + "\n";
+    prompt += EventList[EventNum][3] + "\n";
+    if (6 == size){//怎么又变成7了？
+        prompt += EventList[EventNum][4] + "\n";
+        prompt += EventList[EventNum][5] + "\n";
+        prompt += EventList[EventNum][6] + "\n";
+    }
 
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
                            "查询成功",                        //标题
@@ -480,5 +525,14 @@ void OlympicMainWindow::on_actionByEventNum_triggered()
             this, SLOT(receiveDataEventNumOnly(int,int)));//获取用户输入
     delete CountryNum;
     delete EventNum;
+}
+
+
+void OlympicMainWindow::on_actionInput_Modifie_Data_triggered()
+{
+    //1. 打开一个含有EventNum选项的窗口，首先让用户选择要修改成绩的项目
+    //2. 给出一个lineEdit，要求用户按照格式输入名次
+    //3. 将用户数据更新修改到EventList中
+    //4. 调用on_action_Calculate()来更新table数据
 }
 
