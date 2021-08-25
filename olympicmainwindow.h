@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFile>
+#include "childsearchwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class OlympicMainWindow; }
@@ -31,6 +32,7 @@ private:
     void saveFile(const QString &name);
     void CalculateBackground();//后台计算
     void openDefault();
+    ChildSearchWindow* CSW; //指向子查询窗口的指针
 
 signals:
     void sectionClicked(int);
@@ -40,5 +42,6 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionCalculate_triggered();
+    void on_actionByCountryNum_triggered();
 };
 #endif // OLYMPICMAINWINDOW_H
