@@ -18,7 +18,7 @@
   <property name="windowTitle">
    <string>SearchGuide</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="labelCountry">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -31,7 +31,7 @@
     <string>待查询的国家编号：</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="spinBox">
+  <widget class="QSpinBox" name="spinBoxCountry">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -40,8 +40,11 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="maximum">
+    <number>300</number>
+   </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="labelEvent">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -54,7 +57,7 @@
     <string>待查询的项目编号：</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="spinBox_2">
+  <widget class="QSpinBox" name="spinBoxEvent">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -62,6 +65,9 @@
      <width>151</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="maximum">
+    <number>400</number>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">

@@ -38,6 +38,7 @@ signals:
     void sectionClicked(int);
 public slots:
     void sortTableByCol(int col);
+    void receiveData(int CountryNum, int EventNum);
 private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();

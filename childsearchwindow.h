@@ -12,8 +12,16 @@ class ChildSearchWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChildSearchWindow(QWidget *parent = nullptr);
+    explicit ChildSearchWindow(QWidget *parent = nullptr,
+                               int *CountryNum = nullptr,
+                               int *EventNum = nullptr);
     ~ChildSearchWindow();
+
+signals:
+    void sendData(int CountryNum, int EventNum);
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::ChildSearchWindow *ui;

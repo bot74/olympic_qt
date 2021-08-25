@@ -330,12 +330,27 @@ void OlympicMainWindow::on_actionByCountryNum_triggered()
     //1. msgBox太小，不能完整输出结果（已解决，是if逻辑判断没进去，我以为size会是6和4，但计算出来是7和5）
     //2. 还没有界面用于读入用户输入
     //3. 只做了取前5项目的文本逻辑（已解决，已补充前3逻辑）
-    int EventNum = 5;//项目编码
-    int CountryNum = 1;//国家编码
+
+    int *CountryNum = new int;
+    int *EventNum = new int;
+    *CountryNum = CountrySum;
+    *EventNum = EventSum;
+    CSW = new ChildSearchWindow(nullptr, CountryNum, EventNum);//动态申请
+    CSW->show();
+    connect(CSW, SIGNAL(sendData(int,int)),
+            this, SLOT(receiveData(int,int)));//获取用户输入
+    delete CountryNum;
+    delete EventNum;
+}
+
+
+void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
+{
     int SingleScore = 0;//单项项目所获总分
 
-    CSW = new ChildSearchWindow();//动态申请
-    CSW->show();
+    //警告，不要轻易取消下面修改CountryNum和EventNum的注释，仅用于临时debug：
+    //CountryNum = 5;
+    //EventNum = 2;
 
     //判断项目类型，初始化提示语
     int size = EventList[EventNum].size();
@@ -345,7 +360,7 @@ void OlympicMainWindow::on_actionByCountryNum_triggered()
                     + " )中获得了：";
 
     //统计成绩，完成提示语
-    if (7 == size){//取前5的项目,不过为什么size是7？
+    if (6 == size){//取前5的项目
 
         if (CountryNum == EventList[EventNum][1].toInt()){
             //输出名次
@@ -378,7 +393,7 @@ void OlympicMainWindow::on_actionByCountryNum_triggered()
             SingleScore += 1;
         }
     }
-    else if (5 == size){//取前3的项目
+    else if (4 == size){//取前3的项目
         if (CountryNum == EventList[EventNum][1].toInt()){
             //输出名次
             prompt += "金牌(5pts)；";
@@ -416,6 +431,4 @@ void OlympicMainWindow::on_actionByCountryNum_triggered()
         //显示消息窗口
         msgBox.exec();
 
-    return;
 }
-
