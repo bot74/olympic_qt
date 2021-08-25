@@ -29,6 +29,7 @@ private:
     QStringList EventList[400];//EventList[0]不使用
     QStringList header;//用于存放水平表头数据
     void saveFile(const QString &name);
+    void CalculateBackground();//后台计算
     void openDefault();
 
 signals:

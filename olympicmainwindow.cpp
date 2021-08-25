@@ -143,8 +143,8 @@ void OlympicMainWindow::on_actionOpen_triggered()
         header << EventList[i][0];  //每一行开头第一个元素是项目名称，加入到header表头中
     }
 
-    //调用actionCalculate来计算国家分数、男女团体分数
-    on_actionCalculate_triggered();
+    //调用calculateBackground()来计算国家分数、男女团体分数
+    CalculateBackground();
 
     //根据计算结果填充主页榜单表格,共CountrySum行，4列，4列分别为：国家编号，国家总分，男子总分，女子总分
     for (i = 1; i <= CountrySum; i++){
@@ -203,32 +203,14 @@ void OlympicMainWindow::on_actionSave_triggered()
 
 void OlympicMainWindow::on_actionCalculate_triggered()
 {
-    int i = 0;
-    for (i = 1; i <= MaleSum; i++){//统计男子团队数据
-        //假定男子项目均为取前五积分，规则为7、5、3、2、1
-        int num = EventList[i][1].toInt();//获取第1名名次所属国家的编号
-        CountryScoreMale[num] += 7;
-        num = EventList[i][2].toInt();//获取第2名名次所属国家的编号
-        CountryScoreMale[num] += 5;
-        num = EventList[i][3].toInt();//获取第3名名次所属国家的编号
-        CountryScoreMale[num] += 3;
-        num = EventList[i][4].toInt();//获取第3名名次所属国家的编号
-        CountryScoreMale[num] += 2;
-        num = EventList[i][5].toInt();//获取第5名名次所属国家的编号
-        CountryScoreMale[num] += 1;
-    }
-    for (; i <= EventSum; i++){  //统计女子团队数据
-        //假定女子项目均为取前三积分，规则为5、3、2
-        int num = EventList[i][1].toInt();//获取第1名名次所属国家的编号
-        CountryScoreFemale[num] += 5;
-        num = EventList[i][2].toInt();//获取第2名名次所属国家的编号
-        CountryScoreFemale[num] += 3;
-        num = EventList[i][3].toInt();//获取第3名名次所属国家的编号
-        CountryScoreFemale[num] += 2;
-    }
-    for (i = 1; i <= CountrySum; i++){//统计国家数据
-        CountryScore[i] = CountryScoreFemale[i] + CountryScoreMale[i];
-    }
+    CalculateBackground();//GUI计算按钮按下的话，除了后台计算，可能还要做一些用户方面的交互
+    QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
+                           "成功",                        //标题
+                           "已更新国家得分情况",                      //内容
+                           QMessageBox::Ok,                 //按钮
+                           this);                           //停靠父窗口
+        //显示消息窗口
+        msgBox.exec();
     return;
 }
 
@@ -289,8 +271,8 @@ void OlympicMainWindow::openDefault()
         header << EventList[i][0];  //每一行开头第一个元素是项目名称，加入到header表头中
     }
 
-    //调用actionCalculate来计算国家分数、男女团体分数
-    on_actionCalculate_triggered();
+    //调用calculateBacckground()来计算国家分数、男女团体分数
+    CalculateBackground();
 
     //根据计算结果填充主页榜单表格,共CountrySum行，4列，4列分别为：国家编号，国家总分，男子总分，女子总分
     for (i = 1; i <= CountrySum; i++){
@@ -307,4 +289,35 @@ void OlympicMainWindow::openDefault()
     }
 
     curFile.close();//关闭文件
+}
+
+void OlympicMainWindow::CalculateBackground()
+{
+    int i = 0;
+    for (i = 1; i <= MaleSum; i++){//统计男子团队数据
+        //假定男子项目均为取前五积分，规则为7、5、3、2、1
+        int num = EventList[i][1].toInt();//获取第1名名次所属国家的编号
+        CountryScoreMale[num] += 7;
+        num = EventList[i][2].toInt();//获取第2名名次所属国家的编号
+        CountryScoreMale[num] += 5;
+        num = EventList[i][3].toInt();//获取第3名名次所属国家的编号
+        CountryScoreMale[num] += 3;
+        num = EventList[i][4].toInt();//获取第3名名次所属国家的编号
+        CountryScoreMale[num] += 2;
+        num = EventList[i][5].toInt();//获取第5名名次所属国家的编号
+        CountryScoreMale[num] += 1;
+    }
+    for (; i <= EventSum; i++){  //统计女子团队数据
+        //假定女子项目均为取前三积分，规则为5、3、2
+        int num = EventList[i][1].toInt();//获取第1名名次所属国家的编号
+        CountryScoreFemale[num] += 5;
+        num = EventList[i][2].toInt();//获取第2名名次所属国家的编号
+        CountryScoreFemale[num] += 3;
+        num = EventList[i][3].toInt();//获取第3名名次所属国家的编号
+        CountryScoreFemale[num] += 2;
+    }
+    for (i = 1; i <= CountrySum; i++){//统计国家数据
+        CountryScore[i] = CountryScoreFemale[i] + CountryScoreMale[i];
+    }
+    return;
 }
