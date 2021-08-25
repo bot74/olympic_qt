@@ -432,3 +432,22 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
         msgBox.exec();
 
 }
+
+void OlympicMainWindow::on_actionAbout_triggered()
+{
+    QString prompt = "输入输出数据格式定义:\n";
+    prompt += "第 1 行 3个整数国家编号 n,男子项目总数 m,女子项目总数 w，用/t分隔\n";
+    prompt += "第 2 行到第 m + 1 行，每行开头一个对应的项目名称，之后是 5 个整数 Cij，表示对应的项目 mi 取前五的国家编号 Cij，用/t分隔\n";
+    prompt += "第 m + 2 行到第 m + w + 1行，每行开头一个对应的项目名称，之后是 3 个整数 Cij, 表示对应的项目 wi 取前三的国家编号 Cij，用/t分隔\n";
+    prompt += "规定 n >= 5 && n <= 300, m >= 0, w >= 0;\n";
+    prompt += "规定男子项目全部取前五名积分，女子项目全部取前三名积分；\n";
+
+    QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
+                           "关于",                        //标题
+                           prompt,                      //内容
+                           QMessageBox::Ok,                 //按钮
+                           this);                           //停靠父窗口
+        //显示消息窗口
+        msgBox.exec();
+}
+

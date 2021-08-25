@@ -44,5 +44,6 @@ private slots:
     void on_actionSave_triggered();
     void on_actionCalculate_triggered();
     void on_actionByCountryNum_triggered();
+    void on_actionAbout_triggered();
 };
 #endif // OLYMPICMAINWINDOW_H
