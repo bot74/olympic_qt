@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFile>
 #include "childsearchwindow.h"
+#include "modifiedata.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class OlympicMainWindow; }
@@ -33,6 +34,7 @@ private:
     void CalculateBackground();//后台计算
     void openDefault();
     ChildSearchWindow* CSW; //指向子查询窗口的指针
+    ModifieData* MD;//用于指向修改数据的窗口
 
 signals:
     void sectionClicked(int);
@@ -40,6 +42,8 @@ public slots:
     void sortTableByCol(int col);
     void receiveData(int CountryNum, int EventNum);
     void receiveDataEventNumOnly(int CountryNum, int EventNum);
+    void receiveEventToModified(int CountryNum, int EventNum);
+    void receiveDataToModified(int* cnt);
 private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();

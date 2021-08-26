@@ -11,16 +11,19 @@ CONFIG += c++11
 SOURCES += \
     childsearchwindow.cpp \
     main.cpp \
+    modifiedata.cpp \
     olympicmainwindow.cpp \
     tablewidgetitem.cpp
 
 HEADERS += \
     childsearchwindow.h \
+    modifiedata.h \
     olympicmainwindow.h \
     tablewidgetitem.h
 
 FORMS += \
     childsearchwindow.ui \
+    modifiedata.ui \
     olympicmainwindow.ui
 
 TRANSLATIONS += \

@@ -166,6 +166,7 @@ void OlympicMainWindow::on_actionSave_triggered()
     //对于QIODevice::truncate,官网文档描述为：
     //If possible, the device is truncated before it is opened. All earlier contents of the device are lost.
     //我的猜测是用于覆盖文件，也就是说如果文件原来存在，加上这句话就会覆盖掉原始内容。
+    //猜测验证成功，就是覆盖保存，不是追加保存
     if (!fileToSave.open(QIODevice::WriteOnly | QIODevice::Text)){
         QMessageBox::warning(this, tr("Error"),tr("Save Failed"),QMessageBox::Ok);
         return;
@@ -476,7 +477,7 @@ void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
     prompt += EventList[EventNum][1] + "\n";
     prompt += EventList[EventNum][2] + "\n";
     prompt += EventList[EventNum][3] + "\n";
-    if (6 == size){//怎么又变成7了？
+    if (6 == size){//if(1 == EventNum) size-- 就是为了解决这里的潜在bug
         prompt += EventList[EventNum][4] + "\n";
         prompt += EventList[EventNum][5] + "\n";
         prompt += EventList[EventNum][6] + "\n";
@@ -491,6 +492,78 @@ void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
         msgBox.exec();
 }
 
+void OlympicMainWindow::receiveEventToModified(int CountryNum, int EventNum)
+{
+
+    //只能使用EventNum
+    MD = new ModifieData();
+    if (EventNum > MaleSum){//是女子项目，只需要修改三个值
+        MD->hideLableAndSpineShort();
+    }
+    MD->show();
+
+}
+
+void OlympicMainWindow::receiveDataToModified(int* cnt)
+{
+    //故技重施做一次窗口间的信息传递即可
+
+    //仅供调试
+    //cnt[6]; //[0]不使用
+    //for (int i = 0; i< 6; i++){
+    //    cnt[i] = 0;
+    //}
+    int EventNum = cnt[0];
+    //cnt[1]=1;cnt[2]=2;cnt[3]=3;cnt[4]=4;cnt[5]=5;//for debug purpose
+    QString EventName = EventList[EventNum][0];
+    QStringList updated;
+
+    for (int i =0; i < 6; i++){
+        qDebug() << "cnt[" << i << "]=" << cnt[i];
+    }
+
+    if (EventNum <= MaleSum){
+        updated = {EventName,
+                   QString::number(cnt[1]),
+                   QString::number(cnt[2]),
+                   QString::number(cnt[3]),
+                   QString::number(cnt[4]),
+                   QString::number(cnt[5])
+                  };
+    }
+    else{
+        updated = {EventName,
+                   QString::number(cnt[1]),
+                   QString::number(cnt[2]),
+                   QString::number(cnt[3])
+                  };
+    }
+
+    qDebug() << "updated = " << updated;
+
+    EventList[EventNum] = updated;
+    on_actionCalculate_triggered();
+
+    QMessageBox msgBox;
+    msgBox.setText(tr("数据已被修改"));
+    msgBox.setInformativeText("是否保存数据到文件中?如果选择不保存，数据会临时保存在程序中，稍后您可以通过文件选项卡中的保存按钮来保存数据");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
+    msgBox.setDefaultButton(QMessageBox::Save);
+    int ret = msgBox.exec();
+    switch (ret) {
+      case QMessageBox::Save:
+          // Save was clicked
+        on_actionSave_triggered();
+          break;
+      case QMessageBox::Discard:
+          // Don't Save was clicked
+          break;
+      default:
+          // should never be reached
+          break;
+    }
+}
+
 void OlympicMainWindow::on_actionAbout_triggered()
 {
     QString prompt = "输入输出数据格式定义:\n";
@@ -499,6 +572,9 @@ void OlympicMainWindow::on_actionAbout_triggered()
     prompt += "第 m + 2 行到第 m + w + 1行，每行开头一个对应的项目名称，之后是 3 个整数 Cij, 表示对应的项目 wi 取前三的国家编号 Cij，用/t分隔\n";
     prompt += "规定 n >= 5 && n <= 300, m >= 0, w >= 0;\n";
     prompt += "规定男子项目全部取前五名积分，女子项目全部取前三名积分；\n";
+    prompt += "使用备注：\n";
+    prompt += "点击主页表头，可以实现按照国家编号、国家总分、男子总分或女子总分的升降序排列\n";
+    prompt += "使用数据修改工具时，对于只取前三名积分的项目，输入的第四第五名数据不会被收录\n";
 
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
                            "关于",                        //标题
@@ -530,9 +606,29 @@ void OlympicMainWindow::on_actionByEventNum_triggered()
 
 void OlympicMainWindow::on_actionInput_Modifie_Data_triggered()
 {
-    //1. 打开一个含有EventNum选项的窗口，首先让用户选择要修改成绩的项目
-    //2. 给出一个lineEdit，要求用户按照格式输入名次
+    //1. 打开一个含有EventNum选项的窗口，首先让用户选择要修改成绩的项目（完成）
+    //2. 给出一个对话框，要求用户修改名次（进展中）
     //3. 将用户数据更新修改到EventList中
     //4. 调用on_action_Calculate()来更新table数据
+    int *CountryNum = new int;
+    int *EventNum = new int;
+    *CountryNum = CountrySum;
+    *EventNum = EventSum;
+
+    /*
+    CSW = new ChildSearchWindow(nullptr, CountryNum, EventNum);
+    CSW->hideSpinCountry();
+    CSW->hideLableCountry();
+    CSW->show();
+    connect(CSW, SIGNAL(sendData(int,int)),
+            this, SLOT(receiveEventToModified(int,int)));//获取用户输入      
+    */
+
+    MD = new ModifieData(nullptr, CountryNum, EventNum);
+    MD->show();
+    connect(MD, SIGNAL(sendModifiedData(int*)),
+            this, SLOT(receiveDataToModified(int*)));//获取用户输入
+
+
 }
 
