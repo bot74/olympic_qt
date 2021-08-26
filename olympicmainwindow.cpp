@@ -7,8 +7,10 @@
 #include <QFileDialog>    //用于读取用户选择的文件
 #include <QMessageBox>
 //下面是输出Debug信息时用到的头文件
+
 #include <QDebug>
 #include <QDir>
+
 OlympicMainWindow::OlympicMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::OlympicMainWindow)
@@ -27,9 +29,13 @@ OlympicMainWindow::OlympicMainWindow(QWidget *parent)
     ui->tableWidgetScoreBoard->setColumnCount(5);
     ui->tableWidgetScoreBoard->setHorizontalHeaderLabels(header);//证明了可以在设置完label以后再次重新修改
     */
-
+#ifdef QT_DEBUG
     qDebug() << "表头设置完毕";
     qDebug() << "表头为：" << header;
+#endif
+#ifdef QT_DEBUG
+    qDebug() << "defined QT_DEBUG";
+#endif
 
     //设置表格格式
     ui->tableWidgetScoreBoard->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -42,9 +48,9 @@ OlympicMainWindow::OlympicMainWindow(QWidget *parent)
         ui->tableWidgetScoreBoard->setColumnHidden(i, true);
     }
 
-
+#ifdef QT_DEBUG
     qDebug() << "表格样式设置完毕";
-
+#endif
     openDefault();
     connect(ui->tableWidgetScoreBoard->horizontalHeader(),SIGNAL(sectionClicked(int)),
             this, SLOT(sortTableByCol(int)));//用于排序的信号连接
@@ -55,12 +61,16 @@ void OlympicMainWindow::sortTableByCol(int col)
 {
     static bool m_bUpOrDown = false;//自定义的一个bool变量，表示升序还是降序,初值为false
     if(m_bUpOrDown)	{
+#ifdef QT_DEBUG
         qDebug() << "正在尝试升序排列数据";
+#endif
         ui->tableWidgetScoreBoard->sortItems(col, Qt::AscendingOrder);
         m_bUpOrDown=false;
     }
     else {
+#ifdef QT_DEBUG
         qDebug() << "正在尝试降序排列数据";
+#endif
         ui->tableWidgetScoreBoard->sortItems(col, Qt::DescendingOrder);
         m_bUpOrDown=true;
     }
@@ -80,9 +90,21 @@ void OlympicMainWindow::on_actionOpen_triggered()
     curFile.setFileName(QFileDialog::getOpenFileName(this,
                                                      tr("Open Input Text"), "/", tr("Text files (*.txt)")));
     if (! curFile.open(QIODevice::ReadOnly | QIODevice::Text)){
+#ifdef QT_DEBUG
         qDebug() << "读取文件失败";
         qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
         qDebug()<<"current currentPath: "<<QDir::currentPath();
+#endif
+
+        QString prompt = "读取文件失败\n";
+        QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
+                           "文件丢失",                        //标题
+                           prompt,                      //内容
+                           QMessageBox::Ok,                 //按钮
+                           this);                           //停靠父窗口
+        //显示消息窗口
+        msgBox.exec();
+
     }
     QTextStream output(&curFile);
     QHash<QString, QString> varHash;
@@ -95,14 +117,18 @@ void OlympicMainWindow::on_actionOpen_triggered()
     ui->tableWidgetScoreBoard->clearContents();
     ui->tableWidgetScoreBoard->setRowCount(0);
 
+    /*
     //从文件中读取数据，第一步，初始化
     //QFile f("DefaultInput.txt");
     curFile.setFileName("DefaultInput.txt");
     if (! curFile.open(QIODevice::ReadOnly | QIODevice::Text)){
+#ifdef QT_DEBUG
         qDebug() << "读取文件失败";
         qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
         qDebug()<<"current currentPath: "<<QDir::currentPath();
+#endif
     }
+    */
 
     //从文件中读取数据，第二步，遍历文件
     //定义文件格式如下：
@@ -145,8 +171,9 @@ void OlympicMainWindow::on_actionOpen_triggered()
         //将计算结果包裹到QStringList lineList中
         lineList={QString::number(i), QString::number(CountryScore[i]),
                   QString::number(CountryScoreMale[i]),QString::number(CountryScoreFemale[i])};
-
+#ifdef QT_DEBUG
         qDebug() << lineList;
+#endif
         //用lineList填充表格
         for (int col = 0; col < 4; col++){
             ui->tableWidgetScoreBoard->setItem(i-1, col, new TableWidgetItem(lineList[col]));
@@ -208,8 +235,9 @@ void OlympicMainWindow::on_actionCalculate_triggered()
         //将计算结果包裹到QStringList lineList中
         lineList={QString::number(i), QString::number(CountryScore[i]),
                   QString::number(CountryScoreMale[i]),QString::number(CountryScoreFemale[i])};
-
+#ifdef QT_DEBUG
         qDebug() << lineList;
+#endif
         //用lineList填充表格
         for (int col = 0; col < 4; col++){
             ui->tableWidgetScoreBoard->setItem(i-1, col, new TableWidgetItem(lineList[col]));
@@ -217,12 +245,12 @@ void OlympicMainWindow::on_actionCalculate_triggered()
     }
 
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
-                           "成功",                        //标题
-                           "已更新国家得分情况",                      //内容
-                           QMessageBox::Ok,                 //按钮
-                           this);                           //停靠父窗口
-        //显示消息窗口
-        msgBox.exec();
+                       "成功",                        //标题
+                       "已更新国家得分情况",                      //内容
+                       QMessageBox::Ok,                 //按钮
+                       this);                           //停靠父窗口
+    //显示消息窗口
+    msgBox.exec();
     return;
 }
 
@@ -233,9 +261,21 @@ void OlympicMainWindow::openDefault()
     //QFile f("DefaultInput.txt");
     curFile.setFileName("DefaultInput.txt");
     if (! curFile.open(QIODevice::ReadOnly | QIODevice::Text)){
+#ifdef QT_DEBUG
         qDebug() << "读取文件失败";
         qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
         qDebug()<<"current currentPath: "<<QDir::currentPath();
+#endif
+        QString prompt = "没有在程序所在目录下找到DefaultInput.txt\n";
+        prompt += "您可以在打开程序后手动选择输入文件\n";
+        QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
+                           "文件丢失",                        //标题
+                           prompt,                      //内容
+                           QMessageBox::Ok,                 //按钮
+                           this);                           //停靠父窗口
+        //显示消息窗口
+        msgBox.exec();
+        return;//退出openDefault函数
     }
     QTextStream output(&curFile);
     QHash<QString, QString> varHash;
@@ -292,8 +332,9 @@ void OlympicMainWindow::openDefault()
         //将计算结果包裹到QStringList lineList中
         lineList={QString::number(i), QString::number(CountryScore[i]),
                   QString::number(CountryScoreMale[i]),QString::number(CountryScoreFemale[i])};
-
+#ifdef QT_DEBUG
         qDebug() << lineList;
+#endif
         //用lineList填充表格
         for (int col = 0; col < 4; col++){
             ui->tableWidgetScoreBoard->setItem(i-1, col, new TableWidgetItem(lineList[col]));
@@ -374,17 +415,21 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
 
     //判断项目类型，初始化提示语
     int size = EventList[EventNum].size();
+#ifdef QT_DEBUG
     qDebug() << size;
-
-    if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
-        size--;         //作为折衷方案，做一个特殊判断
+#endif
+#ifdef QT_DEBUG
+    //if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
+        //size--;         //作为折衷方案，做一个特殊判断
+    //在release之后发现存在非法内存访问，是这里又出错了吗？
+#endif
     //qDebug() << EventList[1].size();
     //qDebug() << EventList[2].size();
     //qDebug() <<EventList[1][7];
 
     QString prompt = "国家 " + QString::number(CountryNum) + " 在项目 "
                     + EventList[EventNum][0] + "(编号 " + QString::number(EventNum)
-                    + " )中获得了：";
+            + " )中获得了：";
 
     //统计成绩，完成提示语
     if (6 == size){//取前5的项目
@@ -445,18 +490,18 @@ void OlympicMainWindow::receiveData(int CountryNum, int EventNum)
     prompt += "的成绩，总共在本项目中斩获 ";
     prompt += QString::number(SingleScore);
     prompt += " 分";
-
+#ifdef QT_DEBUG
     qDebug() << "SingleScore for Country" << CountryNum
              << "is " << SingleScore;
     qDebug() << prompt;
-
+#endif
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
-                           "查询成功",                        //标题
-                           prompt,                      //内容
-                           QMessageBox::Ok,                 //按钮
-                           this);                           //停靠父窗口
-        //显示消息窗口
-        msgBox.exec();
+                       "查询成功",                        //标题
+                       prompt,                      //内容
+                       QMessageBox::Ok,                 //按钮
+                       this);                           //停靠父窗口
+    //显示消息窗口
+    msgBox.exec();
 
 }
 
@@ -465,8 +510,11 @@ void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
     QString prompt = "";
     QString EventName = EventList[EventNum][0];
     int size = EventList[EventNum].size();
-    if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
-        size--;         //作为折衷方案，做一个特殊判断
+#ifdef  QT_DEBUG
+    //不知为何release版本有未知的非法内存访问，考虑怀疑这里
+    //if (1 == EventNum)  //不明白是不是Qt的Bug，如果EventNum为1，那么size会是7而不是6，但是如果直接访问[1][7]则非法内存
+        //size--;         //作为折衷方案，做一个特殊判断
+#endif
     //qDebug() << EventList[1].size();
     //qDebug() << EventList[2].size();
     //qDebug() <<EventList[1][7];
@@ -480,16 +528,15 @@ void OlympicMainWindow::receiveDataEventNumOnly(int CountryNum, int EventNum)
     if (6 == size){//if(1 == EventNum) size-- 就是为了解决这里的潜在bug
         prompt += EventList[EventNum][4] + "\n";
         prompt += EventList[EventNum][5] + "\n";
-        prompt += EventList[EventNum][6] + "\n";
     }
 
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
-                           "查询成功",                        //标题
-                           prompt,                      //内容
-                           QMessageBox::Ok,                 //按钮
-                           this);                           //停靠父窗口
-        //显示消息窗口
-        msgBox.exec();
+                       "查询成功",                        //标题
+                       prompt,                      //内容
+                       QMessageBox::Ok,                 //按钮
+                       this);                           //停靠父窗口
+    //显示消息窗口
+    msgBox.exec();
 }
 
 void OlympicMainWindow::receiveEventToModified(int CountryNum, int EventNum)
@@ -517,11 +564,11 @@ void OlympicMainWindow::receiveDataToModified(int* cnt)
     //cnt[1]=1;cnt[2]=2;cnt[3]=3;cnt[4]=4;cnt[5]=5;//for debug purpose
     QString EventName = EventList[EventNum][0];
     QStringList updated;
-
+#ifdef QT_DEBUG
     for (int i =0; i < 6; i++){
         qDebug() << "cnt[" << i << "]=" << cnt[i];
     }
-
+#endif
     if (EventNum <= MaleSum){
         updated = {EventName,
                    QString::number(cnt[1]),
@@ -538,9 +585,9 @@ void OlympicMainWindow::receiveDataToModified(int* cnt)
                    QString::number(cnt[3])
                   };
     }
-
+#ifdef QT_DEBUG
     qDebug() << "updated = " << updated;
-
+#endif
     EventList[EventNum] = updated;
     on_actionCalculate_triggered();
 
@@ -551,16 +598,16 @@ void OlympicMainWindow::receiveDataToModified(int* cnt)
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
     switch (ret) {
-      case QMessageBox::Save:
-          // Save was clicked
+    case QMessageBox::Save:
+        // Save was clicked
         on_actionSave_triggered();
-          break;
-      case QMessageBox::Discard:
-          // Don't Save was clicked
-          break;
-      default:
-          // should never be reached
-          break;
+        break;
+    case QMessageBox::Discard:
+        // Don't Save was clicked
+        break;
+    default:
+        // should never be reached
+        break;
     }
 }
 
@@ -577,12 +624,12 @@ void OlympicMainWindow::on_actionAbout_triggered()
     prompt += "使用数据修改工具时，对于只取前三名积分的项目，输入的第四第五名数据不会被收录\n";
 
     QMessageBox msgBox(QMessageBox::Icon::Information,     //图标
-                           "关于",                        //标题
-                           prompt,                      //内容
-                           QMessageBox::Ok,                 //按钮
-                           this);                           //停靠父窗口
-        //显示消息窗口
-        msgBox.exec();
+                       "关于",                        //标题
+                       prompt,                      //内容
+                       QMessageBox::Ok,                 //按钮
+                       this);                           //停靠父窗口
+    //显示消息窗口
+    msgBox.exec();
 }
 
 
@@ -621,7 +668,7 @@ void OlympicMainWindow::on_actionInput_Modifie_Data_triggered()
     CSW->hideLableCountry();
     CSW->show();
     connect(CSW, SIGNAL(sendData(int,int)),
-            this, SLOT(receiveEventToModified(int,int)));//获取用户输入      
+            this, SLOT(receiveEventToModified(int,int)));//获取用户输入
     */
 
     MD = new ModifieData(nullptr, CountryNum, EventNum);

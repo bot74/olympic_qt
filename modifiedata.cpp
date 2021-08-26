@@ -42,11 +42,12 @@ void ModifieData::on_pushButton_clicked()
     cnt[3]=ui->spinBox_3->value();
     cnt[4]=ui->spinBox_4->value();
     cnt[5]=ui->spinBox_5->value();
-
+#ifdef QT_DEBUG
     for (int i = 0; i < 6; i++){//经测试能正常获取数据
         qDebug() << "cnt[" << i << "] = "
                  << cnt[i];
     }
+#endif
 
     emit sendModifiedData(cnt);
     this->close();
