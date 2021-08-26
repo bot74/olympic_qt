@@ -1,0 +1,6 @@
+5	2	3
+Running	1	1	1	1	1
+Jumping	2	1	5	4	3
+Basketba	5	4	3
+Football	2	1	4
+HighJ	1	3	5
